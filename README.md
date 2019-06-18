@@ -117,3 +117,105 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging
 ```
 
 The dashboard shows that the load is dispatched among the baristas.
+
+
+## OpenShift
+
+Create project
+```
+oc new-project quarkus-coffee --description "Quarkus Coffee Shop" --display-name="Quarkus Coffe Shop"
+```
+
+Create Coffee Shop
+
+index.html
+```
+        //var source = new EventSource("http://localhost:8080/queue");
+        var source = new EventSource("http://coffeeshop-service-quarkus-coffee.apps.foo.sandbox81.opentlc.com/queue");
+```
+
+Build Coffee Shop
+
+```bash
+cd coffeeshop-service
+mvn package -Pnative -DskipTests -Dnative-image.docker-build=true
+
+oc new-build --binary --name=coffeeshop-service -l app=coffeeshop-service
+oc start-build coffeeshop-service --from-dir=. --follow
+oc new-app coffeeshop-service
+oc expose svc coffeeshop-service
+```
+
+Create Barista HTTP
+```bash
+cd barista-http
+mvn package -Pnative -DskipTests -Dnative-image.docker-build=true
+
+oc new-build --binary --name=barista-http -l app=barista-http
+oc start-build barista-http --from-dir=. --follow
+oc new-app barista-http
+```
+
+Create Barista Kafka
+```bash
+cd barista-kafka
+mvn package -Pnative -DskipTests -Dnative-image.docker-build=true
+
+oc new-build --binary --name=barista-kafka-julie -l app=barista-kafka-julie
+ln -fs Dockerfile.julie Dockerfile
+oc start-build barista-kafka-julie --from-dir=. --follow
+oc new-app barista-kafka-julie
+
+oc new-build --binary --name=barista-kafka-tom -l app=barista-kafka-tom
+ln -fs Dockerfile.tom Dockerfile
+oc start-build barista-kafka-tom --from-dir=. --follow
+oc new-app barista-kafka-tom
+```
+
+
+## Test OpenShift
+
+Tail Coffee Shop
+```
+oc logs $(oc get pods -l app=coffeeshop-service -o name) -f
+
+OR
+
+stern coffeeshop-service
+```
+
+Tail Barista HTTP
+```
+oc logs $(oc get pods -l app=barista-http -o name) -f
+
+OR
+
+stern barista-http
+```
+
+Order Coffee via synchronous  http
+```
+export SHOPURL=$(oc get route coffeeshop-service --template='{{ .spec.host }}')
+./order-coffees-serial-http.sh
+```
+
+Tail Barista Kafka
+```
+oc logs $(oc get pods -l app=barista-kafka-julie -o name) -f
+
+OR 
+
+stern barista-kafka-julie
+
+oc logs $(oc get pods -l app=barista-kafka-tom -o name) -f
+
+OR
+
+stern barista-kafka-tom
+```
+
+Order Coffee kafka
+```
+export SHOPURL=$(oc get route coffeeshop-service --template='{{ .spec.host }}')
+./order-coffees.sh
+```
