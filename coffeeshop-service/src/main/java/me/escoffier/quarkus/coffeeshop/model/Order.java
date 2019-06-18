@@ -1,10 +1,19 @@
 package me.escoffier.quarkus.coffeeshop.model;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
+import java.util.Objects;
+
+@RegisterForReflection(methods = true, fields = true)
 public class Order {
 
     private String product;
     private String name;
     private String orderId;
+
+    public Order() {
+
+    }
 
     public String getProduct() {
         return product;
@@ -32,4 +41,5 @@ public class Order {
         this.orderId = orderId;
         return this;
     }
+
 }
