@@ -17,7 +17,11 @@ Run Kafka with:
 docker-compose up
 ```
 
-Then, create the `orders` topic with `./create-orders.sh`
+Then, create the `orders` topic with (need this for multiple partitions)
+
+```
+`./create-orders.sh`
+```
 
 # Run the demo
 
@@ -58,9 +62,9 @@ Important points:
 Order coffees with:
 
 ```bash
-http POST :8080/http product=latte name=clement
-http POST :8080/http product=expresso name=neo
-http POST :8080/http product=mocha name=flore
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/http -d '{"product": "latte", "name": "clement"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/http -d '{"product": "expresso", "name": "neo"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/http -d '{"product": "mocha", "name": "flore"}'
 ```
 
 Stop the HTTP Barista, you can't order coffee anymore.
@@ -75,38 +79,41 @@ Stop the HTTP Barista, you can't order coffee anymore.
 * Order coffee with:
 
 ```bash
-http POST :8080/messaging product=latte name=clement
-http POST :8080/messaging product=expresso name=neo
-http POST :8080/messaging product=mocha name=flore
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "latte", "name": "clement"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "expresso", "name": "neo"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "mocha", "name": "flore"}'
 ```
 
 # Baristas do breaks
 
-1. Stop the Kafka barista
-1. Continue to enqueue order
-```bash
-http POST :8080/messaging product=frappuccino name=clement
-http POST :8080/messaging product=chai name=neo
-http POST :8080/messaging product=hot-chocolate name=flore
+Stop the Kafka barista
+
+Continue to enqueue order
+
 ```
-1. On the dashboard, the orders are in the "IN QUEUE" state
-1. Restart the barista
-1. They are processed
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "latte", "name": "clement"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "expresso", "name": "neo"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "mocha", "name": "flore"}'
+```
+
+On the dashboard, the orders are in the "IN QUEUE" state
+
+Restart the barista
+
+They are processed
 
 # 2 baristas are better
 
-1. Start a second barista with: 
+Start a second barista with: 
 ```bash
 java -Dquarkus.http.port=9095 -Dbarista.name=tom -jar target/barista-kafka-1.0-SNAPSHOT-runner.jar
 ```
-1. Order more coffee
+
+Order more coffee
 ```bash
-http POST :8080/messaging product=frappuccino name=clement
-http POST :8080/messaging product=chai name=neo
-http POST :8080/messaging product=hot-chocolate name=flore
-http POST :8080/messaging product=latte name=clement
-http POST :8080/messaging product=expresso name=neo
-http POST :8080/messaging product=mocha name=flore
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "latte", "name": "clement"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "expresso", "name": "neo"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "mocha", "name": "flore"}'
 ```
 
 The dashboard shows that the load is dispatched among the baristas.

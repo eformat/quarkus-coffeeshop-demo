@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-http POST :8080/messaging name=clement product=iced-latte
-http POST :8080/messaging name=edson product=cappuccino
-http POST :8080/messaging name=rafaele product=espresso
-http POST :8080/messaging name=ken product=americano
-http POST :8080/messaging name=emmanuel product=frappucino
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "iced-latte", "name": "clement"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "expresso", "name": "neo"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "mocha", "name": "flore"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "capucinno", "name": "mike"}'
+curl -X POST -H "Content-Type: application/json" http://localhost:8080/messaging -d '{"product": "americano", "name": "ken"}'

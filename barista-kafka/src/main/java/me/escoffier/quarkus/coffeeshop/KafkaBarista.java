@@ -29,9 +29,6 @@ public class KafkaBarista {
                 .thenApply(beverage -> PreparationState.ready(order, beverage));
     }
 
-
-
-
     private CompletionStage<Beverage> makeIt(Order order) {
         return CompletableFuture.supplyAsync(() -> {
             System.out.println("Preparing a " + order.getProduct());
