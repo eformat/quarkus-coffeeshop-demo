@@ -219,3 +219,9 @@ Order Coffee kafka
 export SHOPURL=$(oc get route coffeeshop-service --template='{{ .spec.host }}')
 ./order-coffees.sh
 ```
+
+Order lots more coffee
+
+```
+while true; do ./order-coffees.sh; sleep 0.5; done
+```
