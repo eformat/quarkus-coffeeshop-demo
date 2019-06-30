@@ -181,6 +181,8 @@ oc new-app barista-kafka-tom
 ```
 # s2i
 oc new-build --name=coffeeshop-demo -l app=coffeeshop-demo quay.io/eformat/quarkus-native-s2i:graalvm-19.0.2~https://github.com/eformat/quarkus-coffeeshop-demo
+
+# coffeeshop-service
 oc new-build --name=coffeeshop-service \
     --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
     --source-image=coffeeshop-demo \
@@ -189,6 +191,36 @@ oc new-build --name=coffeeshop-service \
     --allow-missing-imagestream-tags
 oc new-app --image-stream=coffeeshop-service -l app=coffeeshop-service
 oc expose svc coffeeshop-service
+
+# barista-http
+oc new-build --name=barista-http \
+    --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
+    --source-image=coffeeshop-demo \
+    --source-image-path='/home/quarkus/application-barista-http:.' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-http /application\n\nEXPOSE 8080\nCMD ["./application", " -Xmx20M -Xms20M -Xmn20M"]' \
+    --allow-missing-imagestream-tags
+oc new-app --image-stream=barista-http -l app=barista-http
+oc expose svc barista-http
+
+# barista-kafka-julie 
+oc new-build --name=barista-kafka-julie \
+    --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
+    --source-image=coffeeshop-demo \
+    --source-image-path='/home/quarkus/application-barista-kafka:.' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\nCMD ["./application", " -Xmx20M -Xms20M -Xmn20M", "-Dbarista.name=julie", "-Dmp.messaging.incoming.orders.client.id=julie", "-Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092", "-Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092"]' \
+    --allow-missing-imagestream-tags
+oc new-app --image-stream=barista-kafka-julie -l app=barista-kafka-julie
+oc expose svc barista-kafka-julie
+
+# barista-kafka-tom
+oc new-build --name=barista-kafka-tom \
+    --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
+    --source-image=coffeeshop-demo \
+    --source-image-path='/home/quarkus/application-barista-kafka:.' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\nCMD ["./application", " -Xmx20M -Xms20M -Xmn20M", "-Dbarista.name=tom", "-Dmp.messaging.incoming.orders.client.id=tom", "-Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092", "-Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092"]' \
+    --allow-missing-imagestream-tags
+oc new-app --image-stream=barista-kafka-tom -l app=barista-kafka-tom
+oc expose svc barista-kafka-tom
 ```
 
 ## Test OpenShift

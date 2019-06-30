@@ -66,6 +66,6 @@ spec:
 EOF
 }
 
-#createCluster
+createCluster
 createOrdersTopic
 createQueueTopic
