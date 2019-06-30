@@ -43,8 +43,8 @@
 <script>
 
     $(function () {
-        var source = new EventSource("http://localhost:8080/queue");
-        //var source = new EventSource("http://coffeeshop-service-quarkus-coffee.apps.foo.sandbox81.opentlc.com/queue");
+        //var source = new EventSource("http://localhost:8080/queue");
+        var source = new EventSource("http://coffeeshop-service-quarkus-coffee.apps.foo.sandbox545.opentlc.com/queue");
         source.onmessage = function(e) {
             console.log(e);
             var state = JSON.parse(e.data);

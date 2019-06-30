@@ -121,6 +121,8 @@ The dashboard shows that the load is dispatched among the baristas.
 
 ## OpenShift
 
+Create Strimzi (TODO)
+
 Create project
 ```
 oc new-project quarkus-coffee --description "Quarkus Coffee Shop" --display-name="Quarkus Coffe Shop"
@@ -140,6 +142,7 @@ Build Coffee Shop
 cd coffeeshop-service
 mvn package -Pnative -DskipTests -Dnative-image.docker-build=true
 
+# binary
 oc new-build --binary --name=coffeeshop-service -l app=coffeeshop-service
 oc start-build coffeeshop-service --from-dir=. --follow
 oc new-app coffeeshop-service
@@ -151,6 +154,7 @@ Create Barista HTTP
 cd barista-http
 mvn package -Pnative -DskipTests -Dnative-image.docker-build=true
 
+# binary
 oc new-build --binary --name=barista-http -l app=barista-http
 oc start-build barista-http --from-dir=. --follow
 oc new-app barista-http
@@ -172,6 +176,21 @@ oc start-build barista-kafka-tom --from-dir=. --follow
 oc new-app barista-kafka-tom
 ```
 
+#### S2I
+
+```
+# s2i
+oc new-build --name=coffeeshop-demo -l app=coffeeshop-demo quay.io/eformat/quarkus-native-s2i:graalvm-19.0.2~https://github.com/eformat/quarkus-coffeeshop-demo
+
+oc new-build --name=coffeeshop-service-app \
+    --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
+    --source-image=coffeeshop-service \
+    --source-image-path='/home/quarkus/application:.' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application /application\nCMD /application -Xmx20M -Xms20M -Xmn20M\nEXPOSE 8080' \
+    --allow-missing-imagestream-tags
+oc new-app coffeeshop-service-app -l app=coffeeshop-service-app
+oc expose svc coffeeshop-service-app
+```
 
 ## Test OpenShift
 
