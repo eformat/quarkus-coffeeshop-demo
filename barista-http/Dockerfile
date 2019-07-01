@@ -9,4 +9,4 @@ WORKDIR /work/
 COPY target/*-runner /work/application
 RUN chmod 775 /work
 EXPOSE 8080
-CMD ["./application", "-Dquarkus.http.host=0.0.0.0", "-Dquarkus.http.port=8080"]
+CMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dquarkus.http.host=0.0.0.0 -Dquarkus.http.port=8080

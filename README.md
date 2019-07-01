@@ -187,7 +187,7 @@ oc new-build --name=coffeeshop-service \
     --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
     --source-image=coffeeshop-demo \
     --source-image-path='/home/quarkus/application-coffeeshop-service:.' \
-    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-coffeeshop-service /application\nCMD ["./application", " -Xmx20M -Xms20M -Xmn20M", "-Dquarkus.http.host=0.0.0.0", "-Dme.escoffier.quarkus.coffeeshop.http.BaristaService/mp-rest/url=http://barista-http:8080", "-Dmp.messaging.outgoing.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092", "-Dmp.messaging.incoming.beverages.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092", "-Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092"]' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-coffeeshop-service /application\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dquarkus.http.host=0.0.0.0 -Dme.escoffier.quarkus.coffeeshop.http.BaristaService/mp-rest/url=http://barista-http:8080 -Dmp.messaging.outgoing.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.incoming.beverages.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092' \
     --allow-missing-imagestream-tags
 oc new-app --image-stream=coffeeshop-service -l app=coffeeshop-service
 oc expose svc coffeeshop-service
@@ -197,7 +197,7 @@ oc new-build --name=barista-http \
     --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
     --source-image=coffeeshop-demo \
     --source-image-path='/home/quarkus/application-barista-http:.' \
-    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-http /application\n\nEXPOSE 8080\nCMD ["./application", " -Xmx20M -Xms20M -Xmn20M"]' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-http /application\n\nEXPOSE 8080\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape' \
     --allow-missing-imagestream-tags
 oc new-app --image-stream=barista-http -l app=barista-http
 oc expose svc barista-http
@@ -207,7 +207,7 @@ oc new-build --name=barista-kafka-julie \
     --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
     --source-image=coffeeshop-demo \
     --source-image-path='/home/quarkus/application-barista-kafka:.' \
-    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\nCMD ["./application", " -Xmx20M -Xms20M -Xmn20M", "-Dbarista.name=julie", "-Dmp.messaging.incoming.orders.client.id=julie", "-Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092", "-Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092"]' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dbarista.name=julie -Dmp.messaging.incoming.orders.client.id=julie -Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092' \
     --allow-missing-imagestream-tags
 oc new-app --image-stream=barista-kafka-julie -l app=barista-kafka-julie
 oc expose svc barista-kafka-julie
@@ -217,7 +217,7 @@ oc new-build --name=barista-kafka-tom \
     --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
     --source-image=coffeeshop-demo \
     --source-image-path='/home/quarkus/application-barista-kafka:.' \
-    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\nCMD ["./application", " -Xmx20M -Xms20M -Xmn20M", "-Dbarista.name=tom", "-Dmp.messaging.incoming.orders.client.id=tom", "-Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092", "-Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092"]' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dbarista.name=tom -Dmp.messaging.incoming.orders.client.id=tom -Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092' \
     --allow-missing-imagestream-tags
 oc new-app --image-stream=barista-kafka-tom -l app=barista-kafka-tom
 oc expose svc barista-kafka-tom
