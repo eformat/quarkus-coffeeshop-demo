@@ -40,7 +40,7 @@ metadata:
     strimzi.io/cluster: my-cluster
   namespace: strimzi
 spec:
-  partitions: 4
+  partitions: 40
   replicas: 3
   config:
     retention.ms: 604800000
@@ -58,7 +58,7 @@ metadata:
     strimzi.io/cluster: my-cluster
   namespace: strimzi
 spec:
-  partitions: 4
+  partitions: 40
   replicas: 3
   config:
     retention.ms: 604800000
