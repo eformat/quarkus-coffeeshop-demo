@@ -180,14 +180,14 @@ oc new-app barista-kafka-tom
 
 ```
 # s2i
-oc new-build --name=coffeeshop-demo -l app=coffeeshop-demo quay.io/eformat/quarkus-native-s2i:graalvm-19.0.2~https://github.com/eformat/quarkus-coffeeshop-demo
+oc new-build --name=quarkus-coffeeshop-demo -l app=quarkus-coffeeshop-demo quay.io/eformat/quarkus-native-s2i:graalvm-19.0.2~https://github.com/eformat/quarkus-coffeeshop-demo
 
 # coffeeshop-service
 oc new-build --name=coffeeshop-service \
     --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
-    --source-image=coffeeshop-demo \
+    --source-image=quarkus-coffeeshop-demo \
     --source-image-path='/home/quarkus/application-coffeeshop-service:.' \
-    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-coffeeshop-service /application\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dquarkus.http.host=0.0.0.0 -Dme.escoffier.quarkus.coffeeshop.http.BaristaService/mp-rest/url=http://barista-http:8080 -Dmp.messaging.outgoing.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.incoming.beverages.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-coffeeshop-service /application\n\nEXPOSE 8080\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dquarkus.http.host=0.0.0.0 -Dme.escoffier.quarkus.coffeeshop.http.BaristaService/mp-rest/url=http://barista-http:8080 -Dmp.messaging.outgoing.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.incoming.beverages.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092' \
     --allow-missing-imagestream-tags
 oc new-app --image-stream=coffeeshop-service -l app=coffeeshop-service
 oc expose svc coffeeshop-service
@@ -195,9 +195,9 @@ oc expose svc coffeeshop-service
 # barista-http
 oc new-build --name=barista-http \
     --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
-    --source-image=coffeeshop-demo \
+    --source-image=quarkus-coffeeshop-demo \
     --source-image-path='/home/quarkus/application-barista-http:.' \
-    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-http /application\n\nEXPOSE 8080\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-http /application\n\nEXPOSE 8080\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dquarkus.http.host=0.0.0.0 -Dquarkus.http.port=8080' \
     --allow-missing-imagestream-tags
 oc new-app --image-stream=barista-http -l app=barista-http
 oc expose svc barista-http
@@ -205,9 +205,9 @@ oc expose svc barista-http
 # barista-kafka-julie 
 oc new-build --name=barista-kafka-julie \
     --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
-    --source-image=coffeeshop-demo \
+    --source-image=quarkus-coffeeshop-demo \
     --source-image-path='/home/quarkus/application-barista-kafka:.' \
-    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dbarista.name=julie -Dmp.messaging.incoming.orders.client.id=julie -Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\n\nEXPOSE 8080\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dbarista.name=julie -Dmp.messaging.incoming.orders.client.id=julie -Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092' \
     --allow-missing-imagestream-tags
 oc new-app --image-stream=barista-kafka-julie -l app=barista-kafka-julie
 oc expose svc barista-kafka-julie
@@ -215,9 +215,9 @@ oc expose svc barista-kafka-julie
 # barista-kafka-tom
 oc new-build --name=barista-kafka-tom \
     --docker-image=registry.access.redhat.com/ubi8/ubi:8.0 \
-    --source-image=coffeeshop-demo \
+    --source-image=quarkus-coffeeshop-demo \
     --source-image-path='/home/quarkus/application-barista-kafka:.' \
-    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dbarista.name=tom -Dmp.messaging.incoming.orders.client.id=tom -Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092' \
+    --dockerfile=$'FROM registry.access.redhat.com/ubi8/ubi:8.0\nCOPY application-barista-kafka /application\n\nEXPOSE 8080\nCMD ./application -Xmx20m -Xms20m -Xmn20m -XX:+PrintGC -XX:+VerboseGC -XX:+PrintGCTimeStamps +XX:+PrintHeapShape -Dbarista.name=tom -Dmp.messaging.incoming.orders.client.id=tom -Dmp.messaging.incoming.orders.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092 -Dmp.messaging.outgoing.queue.bootstrap.servers=my-cluster-kafka-bootstrap.strimzi.svc:9092' \
     --allow-missing-imagestream-tags
 oc new-app --image-stream=barista-kafka-tom -l app=barista-kafka-tom
 oc expose svc barista-kafka-tom
@@ -274,4 +274,98 @@ Order lots more coffee
 
 ```
 while true; do ./order-coffees.sh; sleep 0.5; done
+```
+
+## Tekton S2I Build
+
+```
+PROJECT=$(oc project -q)
+oc create serviceaccount pipeline
+oc adm policy add-scc-to-user privileged -z pipeline
+oc adm policy add-role-to-user edit -z pipeline
+--
+oc create -f ./tekton/openshift-client-task.yaml
+oc create -f ./tekton/s2i-quarkus.yaml
+--
+cat <<EOF | oc apply -f -
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: deploy-pipeline
+spec:
+  resources:
+  - name: app-git
+    type: git
+  - name: app-image
+    type: image
+  tasks:
+  - name: build
+    taskRef:
+      name: s2i-quarkus
+    params:
+      - name: TLSVERIFY
+        value: "false"
+    resources:
+      inputs:
+      - name: source
+        resource: app-git
+      outputs:
+      - name: image
+        resource: app-image
+  - name: deploy
+    taskRef:
+      name: openshift-client
+    runAfter:
+      - build
+    params:
+    - name: ARGS
+      value: "rollout latest quarkus coffeshop app"
+EOF
+
+cat <<EOF | oc create -f -
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: quarkus-coffeeshop-git
+spec:
+  type: git
+  params:
+  - name: url
+    value: https://github.com/eformat/quarkus-coffeeshop-demo
+EOF
+
+cat <<EOF | oc create -f -
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: quarkus-coffeeshop-image
+spec:
+  type: image
+  params:
+  - name: url
+    value: image-registry.openshift-image-registry.svc:5000/${PROJECT}/quarkus-coffeeshop-demo
+EOF
+
+-- can create multiple of these
+
+cat <<EOF | oc create -f -
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  generateName: quarkus-coffeeshop-demo-deploy-pipelinerun-
+spec:
+  timeout: '20m'
+  pipelineRef:
+    name: deploy-pipeline
+  trigger:
+    type: manual
+  serviceAccount: 'pipeline'
+  resources:
+  - name: app-git
+    resourceRef:
+      name: quarkus-coffeeshop-git
+  - name: app-image
+    resourceRef:
+      name: quarkus-coffeeshop-image
+EOF
 ```
