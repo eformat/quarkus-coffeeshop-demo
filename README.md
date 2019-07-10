@@ -1,7 +1,15 @@
 # Coffeeshop Demo with Quarkus
 
+Reactive Event Driven Example using Kafka.
+
+Forked from here with openshift additions
+
+- https://github.com/cescoffier/quarkus-coffeeshop-demo
+
 This directory contains a set of demo around _reactive_ in Quarkus with Kafka.
 It demonstrates the elasticity and resilience of the system.
+
+![coffee shop image](images/coffee-shop-arch.png "Coffee Shop Architecture")
 
 ## Build
 
@@ -11,7 +19,7 @@ mvn clean package
 
 ## Prerequisites
 
-Run Kafka with:
+Run Kafka Locally with:
 
 ```bash
 docker-compose up
@@ -22,6 +30,8 @@ Then, create the `orders` topic with (need this for multiple partitions)
 ```
 `./create-orders.sh`
 ```
+
+On OpenShift - install the Strimzi Operator.
 
 # Run the demo
 
