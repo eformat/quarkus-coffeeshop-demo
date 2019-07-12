@@ -131,7 +131,7 @@ The dashboard shows that the load is dispatched among the baristas.
 
 ## OpenShift
 
-Create Strimzi (TODO)
+Create Strimzi (TODO) 
 
 Create project
 ```
@@ -288,6 +288,8 @@ while true; do ./order-coffees.sh; sleep 0.5; done
 
 ## Tekton S2I Build
 
+Install Tekton Operator (TODO)
+
 ```
 PROJECT=$(oc project -q)
 oc create serviceaccount pipeline
@@ -364,7 +366,7 @@ kind: PipelineRun
 metadata:
   generateName: quarkus-coffeeshop-demo-deploy-pipelinerun-
 spec:
-  timeout: '20m'
+  timeout: '60m'
   pipelineRef:
     name: deploy-pipeline
   trigger:
