@@ -255,7 +255,7 @@ stern barista-http
 
 Order Coffee via synchronous  http
 ```
-export SHOPURL=$(oc get route coffeeshop-service --template='{{ .spec.host }}')
+export SHOPURL=$(oc get route coffeeshop-service -n quarkus-coffee --template='{{ .spec.host }}')
 ./order-coffees-serial-http.sh
 ```
 
@@ -276,7 +276,7 @@ stern barista-kafka-tom
 
 Order Coffee kafka
 ```
-export SHOPURL=$(oc get route coffeeshop-service --template='{{ .spec.host }}')
+export SHOPURL=$(oc get route coffeeshop-service -n quarkus-coffee --template='{{ .spec.host }}')
 ./order-coffees.sh
 ```
 
