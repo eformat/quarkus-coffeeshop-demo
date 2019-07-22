@@ -324,7 +324,7 @@ spec:
       outputs:
       - name: image
         resource: app-image
-  - name: deploy
+  - name: deploy-cofeeshop-service
     taskRef:
       name: openshift-client
     runAfter:
@@ -332,6 +332,30 @@ spec:
     params:
     - name: ARGS
       value: "rollout latest dc/coffeeshop-service"
+  - name: deploy-barista-kafka-julie
+    taskRef:
+      name: openshift-client
+    runAfter:
+      - build
+    params:
+    - name: ARGS
+      value: "rollout latest dc/barista-kafka-julie"
+  - name: deploy-barista-kafka-tom
+    taskRef:
+      name: openshift-client
+    runAfter:
+      - build
+    params:
+    - name: ARGS
+      value: "rollout latest dc/barista-kafka-tom"
+  - name: deploy-barista-http
+    taskRef:
+      name: openshift-client
+    runAfter:
+      - build
+    params:
+    - name: ARGS
+      value: "rollout latest dc/barista-http"                  
 EOF
 
 cat <<EOF | oc create -f -
