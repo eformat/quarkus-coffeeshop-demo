@@ -331,7 +331,7 @@ spec:
       - build
     params:
     - name: ARGS
-      value: "rollout latest quarkus coffeshop app"
+      value: "rollout latest dc/coffeeshop-service"
 EOF
 
 cat <<EOF | oc create -f -
