@@ -131,19 +131,19 @@ The dashboard shows that the load is dispatched among the baristas.
 
 ## OpenShift
 
-Create Strimzi (TODO) 
+On OpenShift - install the Strimzi Operator
+```
+./create-strimzi-openshift.sh
+```
+
+Install Topics
+```
+./create-topics-openshift.sh
+```
 
 Create project
 ```
 oc new-project quarkus-coffee --description "Quarkus Coffee Shop" --display-name="Quarkus Coffe Shop"
-```
-
-Create Coffee Shop
-
-index.html
-```
-        //var source = new EventSource("http://localhost:8080/queue");
-        var source = new EventSource("http://coffeeshop-service-quarkus-coffee.apps.foo.sandbox81.opentlc.com/queue");
 ```
 
 Build Coffee Shop
@@ -288,9 +288,15 @@ while true; do ./order-coffees.sh; sleep 0.5; done
 
 ## Tekton S2I Build
 
-Install Tekton Operator (TODO)
+Install Tekton Operator
+```
+./create-tekton-openshift.sh
+```
+
+Build using tekton
 
 ```
+oc project quarkus-coffee
 PROJECT=$(oc project -q)
 oc create serviceaccount pipeline
 oc adm policy add-scc-to-user privileged -z pipeline
