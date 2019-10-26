@@ -237,7 +237,8 @@ spec:
       - build
     params:
     - name: ARGS
-      value: "rollout latest dc/coffeeshop-service"
+      value: 
+       - "rollout latest dc/coffeeshop-service"
   - name: deploy-barista-kafka-julie
     taskRef:
       name: openshift-client
@@ -245,7 +246,8 @@ spec:
       - build
     params:
     - name: ARGS
-      value: "rollout latest dc/barista-kafka-julie"
+      value: 
+      - "rollout latest dc/barista-kafka-julie"
   - name: deploy-barista-kafka-tom
     taskRef:
       name: openshift-client
@@ -253,7 +255,8 @@ spec:
       - build
     params:
     - name: ARGS
-      value: "rollout latest dc/barista-kafka-tom"
+      value:
+      - "rollout latest dc/barista-kafka-tom"
   - name: deploy-barista-http
     taskRef:
       name: openshift-client
@@ -261,7 +264,8 @@ spec:
       - build
     params:
     - name: ARGS
-      value: "rollout latest dc/barista-http"
+      value:
+      - "rollout latest dc/barista-http"
 EOF
 
 cat <<EOF | oc apply -f -
@@ -299,8 +303,6 @@ spec:
   timeout: '60m'
   pipelineRef:
     name: deploy-pipeline
-  trigger:
-    type: manual
   serviceAccount: 'pipeline'
   resources:
   - name: app-git

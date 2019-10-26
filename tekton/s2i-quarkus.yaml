@@ -11,9 +11,11 @@ spec:
       - name: PATH_CONTEXT
         description: The location of the path to run s2i from.
         default: .
+        type: string
       - name: TLSVERIFY
         description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS registry)
-        default: "true"
+        default: "false"
+        type: string        
   outputs:
     resources:
       - name: image

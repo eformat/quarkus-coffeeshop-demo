@@ -259,7 +259,7 @@ spec:
 EOF
 }
 
-#createEphemeralCluster
-createStatefulCluster
+createEphemeralCluster
+#createStatefulCluster
 createOrdersTopic
 createQueueTopic
