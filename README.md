@@ -223,6 +223,9 @@ spec:
     params:
       - name: TLSVERIFY
         value: "false"
+    params:
+      - name: PATH_CONTEXT
+        value: "."
     resources:
       inputs:
       - name: source
@@ -313,6 +316,15 @@ spec:
       name: quarkus-coffeeshop-image
 EOF
 ```
+
+OR you can start the pipeline using the CLI
+```
+tkn pipeline start deploy-pipeline \
+        -r app-git=quarkus-coffeeshop-git \
+        -r app-image=quarkus-coffeeshop-image \
+        -s pipeline
+```
+
 
 #### S2I
 
