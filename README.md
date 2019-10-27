@@ -250,6 +250,7 @@ spec:
       value:
        - start-build
        - coffeeshop-service
+       - --wait
   - name: build-barista-http
     taskRef:
       name: openshift-client  
@@ -260,6 +261,7 @@ spec:
       value:
        - start-build
        - barista-http
+       - --wait
   - name: barista-kafka-julie
     taskRef:
       name: openshift-client  
@@ -270,6 +272,7 @@ spec:
       value:
        - start-build
        - barista-kafka-julie
+       - --wait
   - name: barista-kafka-tom
     taskRef:
       name: openshift-client  
@@ -280,6 +283,7 @@ spec:
       value:
        - start-build
        - barista-kafka-tom
+       - --wait
   - name: deploy-cofeeshop-service
     taskRef:
       name: openshift-client
@@ -288,7 +292,9 @@ spec:
     params:
     - name: ARGS
       value:
-       - "rollout latest dc/coffeeshop-service"
+       - rollout
+       - latest
+       - dc/coffeeshop-service
   - name: deploy-barista-http
     taskRef:
       name: openshift-client
@@ -297,7 +303,9 @@ spec:
     params:
     - name: ARGS
       value:
-      - "rollout latest dc/barista-http"
+      - rollout
+      - latest
+      - dc/barista-http
   - name: deploy-barista-kafka-julie
     taskRef:
       name: openshift-client
@@ -306,7 +314,9 @@ spec:
     params:
     - name: ARGS
       value:
-      - "rollout latest dc/barista-kafka-julie"
+      - rollout
+      - latest
+      - dc/barista-kafka-julie
   - name: deploy-barista-kafka-tom
     taskRef:
       name: openshift-client
@@ -315,7 +325,9 @@ spec:
     params:
     - name: ARGS
       value:
-      - "rollout latest dc/barista-kafka-tom"
+      - rollout
+      - latest
+      - dc/barista-kafka-tom
 EOF
 
 cat <<EOF | oc apply -f -
