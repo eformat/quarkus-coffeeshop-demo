@@ -193,6 +193,13 @@ Install Tekton Operator
 ./create-tekton-openshift.sh
 ```
 
+Create application definitions
+
+```
+oc new-project quarkus-coffee --description "Quarkus Coffee Shop" --display-name="Quarkus Coffee Shop"
+oc apply -f ./manifests.yaml
+```
+
 Build using tekton
 
 ```
@@ -217,7 +224,7 @@ spec:
   - name: app-image
     type: image
   tasks:
-  - name: build
+  - name: build-base
     taskRef:
       name: s2i-quarkus
     params:
@@ -233,42 +240,82 @@ spec:
       outputs:
       - name: image
         resource: app-image
+  - name: build-cofeeshop-service
+    taskRef:
+      name: openshift-client  
+    runAfter:
+      - build-base
+    params:
+    - name: ARGS
+      value:
+       - start-build
+       - coffeeshop-service
+  - name: build-barista-http
+    taskRef:
+      name: openshift-client  
+    runAfter:
+      - build-base
+    params:
+    - name: ARGS
+      value:
+       - start-build
+       - barista-http
+  - name: barista-kafka-julie
+    taskRef:
+      name: openshift-client  
+    runAfter:
+      - build-base
+    params:
+    - name: ARGS
+      value:
+       - start-build
+       - barista-kafka-julie
+  - name: barista-kafka-tom
+    taskRef:
+      name: openshift-client  
+    runAfter:
+      - build-base
+    params:
+    - name: ARGS
+      value:
+       - start-build
+       - barista-kafka-tom
   - name: deploy-cofeeshop-service
     taskRef:
       name: openshift-client
     runAfter:
-      - build
+      - build-cofeeshop-service
     params:
     - name: ARGS
-      value: 
+      value:
        - "rollout latest dc/coffeeshop-service"
+  - name: deploy-barista-http
+    taskRef:
+      name: openshift-client
+    runAfter:
+      - build-barista-http
+    params:
+    - name: ARGS
+      value:
+      - "rollout latest dc/barista-http"
   - name: deploy-barista-kafka-julie
     taskRef:
       name: openshift-client
     runAfter:
-      - build
+      - barista-kafka-julie
     params:
     - name: ARGS
-      value: 
+      value:
       - "rollout latest dc/barista-kafka-julie"
   - name: deploy-barista-kafka-tom
     taskRef:
       name: openshift-client
     runAfter:
-      - build
+      - barista-kafka-tom
     params:
     - name: ARGS
       value:
       - "rollout latest dc/barista-kafka-tom"
-  - name: deploy-barista-http
-    taskRef:
-      name: openshift-client
-    runAfter:
-      - build
-    params:
-    - name: ARGS
-      value:
-      - "rollout latest dc/barista-http"
 EOF
 
 cat <<EOF | oc apply -f -
@@ -325,6 +372,7 @@ tkn pipeline start deploy-pipeline \
         -s pipeline
 ```
 
+Watch the pipeline logs using `stern quarkus-coffeeshop-demo-deploy-pipelinerun-<random name>`
 
 #### S2I
 
